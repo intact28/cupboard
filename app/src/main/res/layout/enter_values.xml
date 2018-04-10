@@ -8,8 +8,11 @@
     android:text="Enter item"/>
 
     <EditText
+        android:id="@+id/enter_field"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:ou
-        tools:padding="8dp" />
+        android:inputType="text"
+        android:singleLine="true"
+        android:imeOptions="actionDone"
+        android:layout_marginTop="8dp" />
 </FrameLayout>

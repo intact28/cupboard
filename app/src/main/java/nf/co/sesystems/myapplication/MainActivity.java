@@ -17,24 +17,24 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        mItemsList =  findViewById(R.id.item_list);
-
-        String[] dummyItems = {
-
-        };
-
-        for (String dummyWeatherDay : dummyItems) {
-            mItemsList.append(dummyWeatherDay + "\n\n\n");
-        }
+        mItemsList = findViewById(R.id.item_list);
 
         FloatingActionButton fab = findViewById(R.id.floatingActionButton);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(getApplicationContext(), EnterValues.class);
-                startActivity(intent);
+                startActivityForResult(intent, 0);
             }
         });
+
+
+    }
+
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == 0 && resultCode == RESULT_OK) {
+            mItemsList.append(data.getStringExtra("item") + "\n");
+        }
     }
 
 }
