@@ -36,6 +36,14 @@ public class ListItem implements Serializable {
         this.quantity = quantity;
     }
 
+    public void incrementQuantity() {
+        this.quantity = this.quantity + 1;
+    }
+
+    public void decrementQuantity() {
+        this.quantity = this.quantity - 1;
+    }
+
     public ListItem(String name, int quantity, String note){
         this.name = name;
         this.quantity = quantity;

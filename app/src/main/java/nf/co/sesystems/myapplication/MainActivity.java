@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
@@ -41,6 +42,18 @@ public class MainActivity extends AppCompatActivity {
         recyclerView.setLayoutManager(mLayoutManager);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setAdapter(mAdapter);
+
+        mAdapter.setOnItemClickListener(new ListItemAdapter.onRecyclerViewItemClickListener() {
+            @Override
+            public void onItemClickListener(View view, int position) {
+                if (view.getId() == R.id.ib_add) {
+                    addQuantity(position);
+                }
+                if (view.getId() == R.id.ib_remove) {
+                    removeQuantity(position);
+                }
+            }
+        });
     }
 
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -52,5 +65,15 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    public void addQuantity(int position) {
+        itemList.get(position).incrementQuantity();
+        mAdapter.notifyDataSetChanged();
+    }
 
+    public void removeQuantity(int position) {
+        if (itemList.get(position).getQuantity() != 0) {
+            itemList.get(position).decrementQuantity();
+            mAdapter.notifyDataSetChanged();
+        }
+    }
 }
