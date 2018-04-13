@@ -43,6 +43,13 @@ public class MainActivity extends AppCompatActivity {
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setAdapter(mAdapter);
 
+        mAdapter.setOnItemLongClickListener(new ListItemAdapter.onRecyclerViewItemLongClickListener() {
+            @Override
+            public void onItemLongClickListener(View view, int position) {
+                removeItem(position);
+            }
+        });
+
         mAdapter.setOnItemClickListener(new ListItemAdapter.onRecyclerViewItemClickListener() {
             @Override
             public void onItemClickListener(View view, int position) {
@@ -75,5 +82,10 @@ public class MainActivity extends AppCompatActivity {
             itemList.get(position).decrementQuantity();
             mAdapter.notifyDataSetChanged();
         }
+    }
+
+    public void removeItem(int position) {
+        itemList.remove(position);
+        mAdapter.notifyDataSetChanged();
     }
 }
