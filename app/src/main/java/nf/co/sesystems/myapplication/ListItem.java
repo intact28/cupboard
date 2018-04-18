@@ -1,16 +1,18 @@
 package nf.co.sesystems.myapplication;
 
+import android.arch.persistence.room.Entity;
+import android.arch.persistence.room.PrimaryKey;
+import android.support.annotation.NonNull;
+
 import java.io.Serializable;
 
+@Entity
 public class ListItem implements Serializable {
 
+    @PrimaryKey @NonNull
     private String name = "";
     private String note = "";
     private int quantity = 0;
-
-    public ListItem(){
-
-    }
 
     public String getName() {
         return name;

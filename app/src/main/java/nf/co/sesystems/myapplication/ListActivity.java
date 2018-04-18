@@ -1,5 +1,6 @@
 package nf.co.sesystems.myapplication;
 
+import android.arch.persistence.room.Room;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.support.design.widget.FloatingActionButton;
@@ -14,16 +15,22 @@ import android.view.View;
 import java.util.ArrayList;
 import java.util.List;
 
+import nf.co.sesystems.myapplication.room.AppDatabase;
+
 public class ListActivity extends AppCompatActivity {
 
     private RecyclerView recyclerView;
     private List<ListItem> itemList = new ArrayList<>();
     private ListItemAdapter mAdapter;
+    private List<ListItem> dbList;
+    public static AppDatabase db;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.list_activity);
+
+        db = Room.databaseBuilder(getApplicationContext(), AppDatabase.class, "item-database").build();
 
         FloatingActionButton fab = findViewById(R.id.floatingActionButton);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -60,13 +67,34 @@ public class ListActivity extends AppCompatActivity {
                 }
             }
         });
+
+        Thread t = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                dbList = db.ListItemDao().getAllItems();
+                for (ListItem listItem : dbList) {
+                    itemList.add(listItem);
+                    mAdapter.notifyDataSetChanged();
+                }
+            }
+        });
+        t.start();
+
     }
 
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == 0 && resultCode == RESULT_OK) {
-            ListItem listItem = (ListItem) data.getSerializableExtra("item");
+            final ListItem listItem = (ListItem) data.getSerializableExtra("item");
             itemList.add(listItem);
             mAdapter.notifyDataSetChanged();
+
+            Thread t = new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    addItemToDb(listItem);
+                }
+            });
+            t.start();
         }
 
     }
@@ -100,6 +128,10 @@ public class ListActivity extends AppCompatActivity {
                     }
                 });
         builder.create().show();
-
     }
+
+    public void addItemToDb(ListItem listItem) {
+        db.ListItemDao().insertAll(listItem);
+    }
+
 }
