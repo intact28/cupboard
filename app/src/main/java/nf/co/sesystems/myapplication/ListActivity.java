@@ -22,7 +22,8 @@ public class ListActivity extends AppCompatActivity {
     private RecyclerView recyclerView;
     private List<ListItem> itemList = new ArrayList<>();
     private ListItemAdapter mAdapter;
-    private List<ListItem> dbList;
+    private List<ListItem> dbList = new ArrayList<>();
+    private List<ListItem> removedItemsList = new ArrayList<>();
     public static AppDatabase db;
 
     @Override
@@ -68,7 +69,7 @@ public class ListActivity extends AppCompatActivity {
             }
         });
 
-        Thread t = new Thread(new Runnable() {
+        Thread fetchFullListThread = new Thread(new Runnable() {
             @Override
             public void run() {
                 dbList = db.ListItemDao().getAllItems();
@@ -78,8 +79,27 @@ public class ListActivity extends AppCompatActivity {
                 }
             }
         });
-        t.start();
+        fetchFullListThread.start();
 
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+
+        Thread addItemToDbThread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+
+                for (ListItem listItem : removedItemsList) {
+                    removeItemFromDb(listItem);
+                }
+                for (ListItem listItem : itemList) {
+                    addItemToDb(listItem);
+                }
+            }
+        });
+        addItemToDbThread.start();
     }
 
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -87,14 +107,6 @@ public class ListActivity extends AppCompatActivity {
             final ListItem listItem = (ListItem) data.getSerializableExtra("item");
             itemList.add(listItem);
             mAdapter.notifyDataSetChanged();
-
-            Thread t = new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    addItemToDb(listItem);
-                }
-            });
-            t.start();
         }
 
     }
@@ -117,6 +129,7 @@ public class ListActivity extends AppCompatActivity {
                 .setPositiveButton("Delete", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
+                        removedItemsList.add(itemList.get(position));
                         itemList.remove(position);
                         mAdapter.notifyDataSetChanged();
                     }
@@ -132,6 +145,10 @@ public class ListActivity extends AppCompatActivity {
 
     public void addItemToDb(ListItem listItem) {
         db.ListItemDao().insertAll(listItem);
+    }
+
+    public void removeItemFromDb(ListItem listItem) {
+        db.ListItemDao().delete(listItem);
     }
 
 }
