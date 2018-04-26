@@ -12,6 +12,13 @@
         android:layout_height="wrap_content"
         android:padding="16dp"
         android:text="Welcome to MyCupboard!" />
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/cupboard_list"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/greetings"
+        android:scrollbars="vertical" />
     
     <Button
         android:id="@+id/add_cupboard"
@@ -20,6 +27,6 @@
         android:layout_height="60dp"
         android:clickable="true"
         android:layout_alignParentBottom="true"
-        android:text="Add a cupboard"/>
+        android:text="Add a cupboard" />
 
 </RelativeLayout>

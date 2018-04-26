@@ -14,6 +14,7 @@ import android.view.View;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 import nf.co.sesystems.myapplication.room.AppDatabase;
 
@@ -24,6 +25,7 @@ public class ListActivity extends AppCompatActivity {
     private ListItemAdapter mAdapter;
     private List<ListItem> dbList = new ArrayList<>();
     private List<ListItem> removedItemsList = new ArrayList<>();
+    private String mId;
     public static AppDatabase db;
 
     @Override
@@ -31,13 +33,17 @@ public class ListActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.list_activity);
 
-        db = Room.databaseBuilder(getApplicationContext(), AppDatabase.class, "item-database").build();
+        mId = getIntent().getStringExtra("id");
+        db = Room.databaseBuilder(getApplicationContext(), AppDatabase.class, "item-database")
+                .fallbackToDestructiveMigration()
+                .build();
 
         FloatingActionButton fab = findViewById(R.id.floatingActionButton);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(getApplicationContext(), EnterValues.class);
+                intent.putExtra("id", mId);
                 startActivityForResult(intent, 0);
             }
         });

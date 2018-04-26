@@ -31,7 +31,8 @@ public class EnterValues extends AppCompatActivity {
 
         submitButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                ListItem newItem = new ListItem(name_txt.getText().toString(), Integer.parseInt(quantity_nmbr.getText().toString()), note_txt.getText().toString());
+                ListItem newItem = new ListItem(name_txt.getText().toString(), Integer.parseInt(quantity_nmbr.getText().toString()),
+                        note_txt.getText().toString(), getIntent().getStringExtra("id"));
                 Intent data = getIntent();
                 data.putExtra("item", newItem);
                 setResult(RESULT_OK, data);
